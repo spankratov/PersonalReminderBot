@@ -2,7 +2,7 @@ import requests
 import logging
 
 
-def set_webhook(telegram_url, webhook_url, certificate, logger_name):
+def set_webhook(telegram_url, webhook_url, certificate):
     r = requests.post(telegram_url + 'setWebhook', params={'url': webhook_url},
                       files={'certificate': open(certificate, 'rb')})
     if r.status_code != 200:

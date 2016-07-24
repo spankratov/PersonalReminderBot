@@ -13,7 +13,7 @@ LOG_SETTINGS = {
     'version': 1,
     'root': {
         'level': 'NOTSET',
-        'handlers': ['file'],
+        'handlers': ['info_file', 'error_file'],
     },
     'handlers': {
         'info_file': {
@@ -25,7 +25,7 @@ LOG_SETTINGS = {
             'maxBytes': LOG_CAPACITY_BYTES,
             'backupCount': LOG_BACKUP_COUNT,
         },
-        'info_file': {
+        'error_file': {
             'class': 'logging.handlers.RotatingFileHandler',
             'level': 'ERROR',
             'formatter': 'default',
