@@ -8,6 +8,8 @@ app.config.from_envvar('PERSONALREMINDERBOT_SETTINGS', silent=True)
 
 if app.debug is not True:
     from utils import initialize_logging
+    # app.logger is called in order to load default flask logger name
+    app.logger
     initialize_logging(app.config)
 
 start_app(app.config)

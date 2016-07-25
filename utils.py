@@ -11,7 +11,7 @@ def initialize_logging(config):
 
     def log_except_hook(*exc_info):
         text = "".join(traceback.format_exception(*exc_info))
-        logging.getLogger(config['LOG_PYTHON_EXCEPTIONS_NAME']).error(text)
+        logging.getLogger(config['LOG_FLASK_EXCEPTIONS_NAME']).error(text)
     sys.excepthook = log_except_hook
 
 

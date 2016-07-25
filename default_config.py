@@ -10,7 +10,7 @@ INFO_LOG_PATH = 'path/to/info_log_file.txt'
 PYTHON_EXCEPTIONS_LOG_PATH = 'path/to/python_exceptions_log_file.txt'
 LOG_CAPACITY_BYTES = 1024 * 1024 * 10
 LOG_BACKUP_COUNT = 20
-LOG_PYTHON_EXCEPTIONS_NAME = 'pythonExceptions'
+LOG_FLASK_EXCEPTIONS_NAME = 'flaskapp'  # use the same name that is sent to Flask function during app initialization
 LOG_SETTINGS = {
     'version': 1,
     'root': {
@@ -18,7 +18,7 @@ LOG_SETTINGS = {
         'handlers': ['info_file', 'error_file'],
     },
     'loggers': {
-        LOG_PYTHON_EXCEPTIONS_NAME: {
+        LOG_FLASK_EXCEPTIONS_NAME: {
             'level': 'ERROR',
             'handlers': ['exceptions_file'],
             'propagate': False
@@ -58,7 +58,7 @@ LOG_SETTINGS = {
             'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
         },
         'exceptions': {
-            'format': '%(asctime)s Exception ocurred:\n%(message)s'
+            'format': '%(asctime)s Exception ocurred:\n%(message)s\n'
         }
     }
 }
