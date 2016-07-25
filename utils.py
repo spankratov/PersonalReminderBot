@@ -23,4 +23,4 @@ def stop_app(config):
 def start_app(config):
     logging.info("Starting the app")
     telegram_api.set_webhook(config['TELEGRAM_URL'], config['WEBHOOK_URL'], config['CERTIFICATE'])
-    atexit.register(stop_app)
+    atexit.register(stop_app, config=config)
