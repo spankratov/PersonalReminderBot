@@ -1,5 +1,5 @@
 from flask import Flask, request
-from utils import start_app
+from reminder_bot import PersonalReminderBot
 import logging
 
 app = Flask(__name__)
@@ -11,15 +11,13 @@ if app.debug is not True:
     app.logger
     logging.config.dictConfig(app.config['LOG_SETTINGS'])
 
-bot = start_app(app.config)
+bot = PersonalReminderBot(app.config)
 
 
 @app.route('/webhook/' + app.config['BOT_TOKEN'], methods=['POST'])
 def webhook_handler():
-    logging.info("Got the message.\nHeaders:\n%sData:\n%s\n" % (request.headers, request.data))
-    message = request.get_json()['message']
-    bot.send_message(message['chat']['id'], message['text'])
-    return "Got the message"
+    logging.info("Got the update:\n%s" % request.data)
+    return bot.handle_update(request.get_json())
 
 if __name__ == '__main__':
     app.run()
