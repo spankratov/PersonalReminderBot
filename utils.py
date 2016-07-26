@@ -1,26 +1,17 @@
 import logging
 import logging.config
-import traceback
-import sys
-import telegram_api
+from telegram_api import TelegramBot
 import atexit
 
 
-def initialize_logging(config):
-    logging.config.dictConfig(config['LOG_SETTINGS'])
-
-    def log_except_hook(*exc_info):
-        text = "".join(traceback.format_exception(*exc_info))
-        logging.getLogger(config['LOG_FLASK_EXCEPTIONS_NAME']).error(text)
-    sys.excepthook = log_except_hook
-
-
-def stop_app(config):
+def stop_app(bot):
     logging.info("Stopping the app")
-    telegram_api.reset_webhook(telegram_url=config['TELEGRAM_URL'], certificate=config['CERTIFICATE'])
+    bot.reset_webhook()
 
 
 def start_app(config):
     logging.info("Starting the app")
-    telegram_api.set_webhook(config['TELEGRAM_URL'], config['WEBHOOK_URL'], config['CERTIFICATE'])
-    atexit.register(stop_app, config=config)
+    bot = TelegramBot(config['TELEGRAM_URL'], config['CERTIFICATE'])
+    bot.set_webhook(config['WEBHOOK_URL'])
+    atexit.register(stop_app, bot=bot)
+    return bot
