@@ -1,6 +1,7 @@
 from flask import Flask, request
 from reminder_bot import PersonalReminderBot
 import logging
+import logging.config
 
 app = Flask(__name__)
 app.config.from_pyfile('default_config.py')
