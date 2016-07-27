@@ -1,5 +1,7 @@
-from flask import Flask, request
+from flask import Flask, request, current_app
 from reminder_bot import PersonalReminderBot
+from utils import make_celery
+from telegram_api import TelegramApi
 import logging
 import logging.config
 
@@ -12,13 +14,15 @@ if app.debug is not True:
     app.logger
     logging.config.dictConfig(app.config['LOG_SETTINGS'])
 
-bot = PersonalReminderBot(app.config)
+
+celery = make_celery(app)
+app.bot = PersonalReminderBot(app.config)
 
 
 @app.route('/webhook/' + app.config['BOT_TOKEN'], methods=['POST'])
 def webhook_handler():
     logging.info("Got the update:\n%s" % request.data)
-    return bot.handle_update(request.get_json())
+    return current_app.bot.handle_update(request.get_json())
 
 if __name__ == '__main__':
     app.run()
