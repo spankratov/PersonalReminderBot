@@ -5,6 +5,7 @@ from telegram_api import TelegramApi
 from celery import Celery
 from celery.contrib.methods import task_method
 from datetime import datetime, timedelta
+from bson import ObjectId
 
 celery = Celery('reminder_bot', broker='amqp://guest@localhost//')
 
@@ -33,7 +34,8 @@ class PersonalReminderBot:
         atexit.register(stop_bot)
 
     @celery.task(filter=task_method)
-    def remind(self, object_id):
+    def remind(self, object_id_str):
+        object_id = ObjectId(object_id_str)
         logging.info("Celery task is invoked, ObjectId: " + str(object_id))
         note = self.db.notes.find_one({'_id': object_id})
         chat_id = note['chat_id']
@@ -63,6 +65,6 @@ class PersonalReminderBot:
                         note['file_id'] = message[send_type]['file_id']
                     inserted_note = self.db.notes.insert_one(note)
                     logging.info("Inserted new note to database:\n" + str(note))
-                    self.remind.apply_async(args=[inserted_note.inserted_id], eta=note['due'])
+                    self.remind.apply_async(args=[str(inserted_note.inserted_id)], eta=note['due'])
                     break
         return "Got the message"
