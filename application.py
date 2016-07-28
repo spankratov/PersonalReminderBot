@@ -1,5 +1,6 @@
 import flask
 import logging
+import logging.config
 from celery import Celery
 from views.reminders import UpdatePost
 from reminder_bot import PersonalReminderBot
