@@ -7,16 +7,17 @@ from datetime import datetime, timedelta
 
 class PersonalReminderBot:
     def __init__(self, config):
-        logging.info("Starting the app")
-        telegram_api = TelegramApi(config['TELEGRAM_URL'], config['CERTIFICATE'])
-        telegram_api.set_webhook(config['WEBHOOK_URL'])
-        self.telegram_api = telegram_api
-
+        self.telegram_api = TelegramApi(config['TELEGRAM_URL'], config['CERTIFICATE'])
         self.mongodb_name = config['MONGO_DEFAULT_BD']
-
+        self.webhook_url = config['WEBHOOK_URL']
         self.reminder_text = config['DEFAULT_REMINDER_TEXT']
         self.message_types = config['DEFAULT_MESSAGE_TYPES']
         self.delay = config['DEFAULT_REMINDER_DELAY']
+
+    def set_webhook(self):
+        logging.info("Starting the app")
+        telegram_api = self.telegram_api
+        telegram_api.set_webhook(self.webhook_url)
 
         def stop_bot():
             logging.info("Stopping the app")
