@@ -3,7 +3,6 @@ import atexit
 from telegram_api import TelegramApi
 from pymongo import MongoClient
 from datetime import datetime, timedelta
-from tasks import remind
 
 
 class PersonalReminderBot:
@@ -44,6 +43,7 @@ class PersonalReminderBot:
                     inserted_note = db.notes.insert_one(note)
                     logging.info("Inserted new note to database:\n" + str(note))
                     mongo_client.close()
+                    from tasks import remind
                     remind.apply_async(args=[str(inserted_note.inserted_id)], eta=note['due'])
                     break
         return "Got the message"
