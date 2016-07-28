@@ -30,7 +30,7 @@ class Application(object):
     def celery(self):
         app = self.flask_app
         celery = Celery(app.import_name, broker=app.config[
-                        'CELERY_BROKER_URL'])
+                        'CELERY_BROCKER_URL'])
         celery.conf.update(app.config)
 
         TaskBase = celery.Task
