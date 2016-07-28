@@ -1,7 +1,6 @@
 from flask import Flask, request, current_app
 from reminder_bot import PersonalReminderBot
 from utils import make_celery
-from telegram_api import TelegramApi
 import logging
 import logging.config
 
