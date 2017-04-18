@@ -6,6 +6,7 @@ BOT_TOKEN = 'token'
 TELEGRAM_URL = 'https://api.telegram.org/bot' + BOT_TOKEN + '/'
 WEBHOOK_URL = SERVER_NAME + '/webhook/' + BOT_TOKEN
 CELERY_BROCKER_URL = 'amqp://guest@localhost//'
+CELERY_RESULT_BACKEND = 'rpc://'
 DEFAULT_REMINDER_DELAY = 1000 * 1000 * 10
 DEFAULT_REMINDER_TEXT = 'Hi! Remind you about the %s you sent to me:'
 DEFAULT_MESSAGE_TYPES = ['text', 'photo', 'audio', 'document', 'video', 'voice']
