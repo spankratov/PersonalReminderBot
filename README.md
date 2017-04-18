@@ -7,7 +7,7 @@ Right now this bot is able to:
 
 2. Resend your photos, audios, documents, voice messages and videos in default time (one day).
 
-The bot is written in Python 2.7, it uses Flask, mongodb, celery and rabbitmq. It's still under development, other features and documentation are coming soon.
+The bot is written in Python 2.7, it uses Flask, celery and rabbitmq. It's still under development, other features and documentation are coming soon.
 
 You are welcome to visit the bot [here](http://telegram.me/PersonalReminderBot)
 

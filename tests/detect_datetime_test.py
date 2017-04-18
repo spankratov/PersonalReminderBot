@@ -6,7 +6,7 @@ from dateutil.relativedelta import relativedelta
 
 class TestDetectDatetime(unittest.TestCase):
     def setUp(self):
-        config = {'TELEGRAM_URL': '', 'CERTIFICATE': '', 'MONGO_DEFAULT_BD': '', 'WEBHOOK_URL': '',
+        config = {'TELEGRAM_URL': '', 'CERTIFICATE': '', 'WEBHOOK_URL': '',
                   'DEFAULT_REMINDER_TEXT': '', 'DEFAULT_MESSAGE_TYPES': '',
                   'DEFAULT_REMINDER_DELAY': 1000 * 1000 * 3600 * 24}
         self.bot = PersonalReminderBot(config)

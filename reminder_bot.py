@@ -4,14 +4,12 @@ import re
 from dateutil.parser import parse as parse_datetime
 from dateutil.relativedelta import relativedelta
 from telegram_api import TelegramApi
-from pymongo import MongoClient
 from datetime import datetime
 
 
 class PersonalReminderBot:
     def __init__(self, config):
         self.telegram_api = TelegramApi(config['TELEGRAM_URL'], config['CERTIFICATE'])
-        self.mongodb_name = config['MONGO_DEFAULT_BD']
         self.webhook_url = config['WEBHOOK_URL']
         self.reminder_text = config['DEFAULT_REMINDER_TEXT']
         self.message_types = config['DEFAULT_MESSAGE_TYPES']
@@ -126,31 +124,24 @@ class PersonalReminderBot:
         if 'message' in update:
             message = update['message']
             chat_id = message['chat']['id']
-            note = {'chat_id': chat_id}
             if 'text' in message:
                 predicted_due = self.detect_datetime(message['text'], datetime.utcnow())
                 if predicted_due < datetime.utcnow():
-                    note['due'] = datetime.utcnow() + relativedelta(microseconds=self.delay)
+                    due = datetime.utcnow() + relativedelta(microseconds=self.delay)
                 else:
-                    note['due'] = predicted_due
+                    due = predicted_due
             else:
-                note['due'] = datetime.utcnow() + relativedelta(microseconds=self.delay)
+                due = datetime.utcnow() + relativedelta(microseconds=self.delay)
             for send_type in self.message_types:
                 if send_type in message:
-                    note['type'] = send_type
                     if send_type == 'text':
-                        note['text'] = message['text']
+                        content = message['text']
                     elif send_type == 'photo':
-                        note['file_id'] = message['photo'][0]['file_id']
+                        content = message['photo'][0]['file_id']
                     else:
-                        note['file_id'] = message[send_type]['file_id']
-                    mongo_client = MongoClient()
-                    db = mongo_client[self.mongodb_name]
-                    inserted_note = db.notes.insert_one(note)
-                    logging.info("Inserted new note to database:\n" + str(note))
-                    mongo_client.close()
+                        content = message[send_type]['file_id']
                     from tasks import remind
-                    remind.apply_async(args=[str(inserted_note.inserted_id)], eta=note['due'])
-                    self.telegram_api.send_message(note['chat_id'], 'Ok! You will be reminded at ' + (note['due'] + relativedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S"))
+                    remind.apply_async(args=[chat_id, send_type, content], eta=due)
+                    self.telegram_api.send_message(chat_id, 'Ok! You will be reminded at ' + (due + relativedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S"))
                     break
         return "Got the message"
