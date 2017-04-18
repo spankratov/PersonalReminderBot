@@ -87,7 +87,7 @@ class PersonalReminderBot:
             result = result.replace(day=parsed_datetime.day)
         if not flags['time']:
             result = result.replace(hour=parsed_datetime.hour, minute=parsed_datetime.minute, second=parsed_datetime.second, microsecond=parsed_datetime.microsecond)
-        return result
+        return result - relativedelta(hours=3)  # temporary fix for incorrect timezone
 
     @staticmethod
     def process_word_for_date(word, now):
@@ -122,7 +122,6 @@ class PersonalReminderBot:
             end_of_week = now - relativedelta(days=now.weekday()) + relativedelta(days=6)
             return end_of_week, {'year': True, 'month': True, 'day': True, 'time': False}
 
-
     def handle_update(self, update):
         if 'message' in update:
             message = update['message']
@@ -152,6 +151,6 @@ class PersonalReminderBot:
                     mongo_client.close()
                     from tasks import remind
                     remind.apply_async(args=[str(inserted_note.inserted_id)], eta=note['due'])
-                    self.telegram_api.send_message(note['chat_id'], 'Ok! You will be reminded at ' + note['due'].strftime("%Y-%m-%d %H:%M:%S"))
+                    self.telegram_api.send_message(note['chat_id'], 'Ok! You will be reminded at ' + (note['due'] + relativedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S"))
                     break
         return "Got the message"
