@@ -26,11 +26,11 @@ class PersonalReminderBot:
 
     def handle_update(self, update):
         if 'message' in update:
-            from tasks import detect_datetime, remind
+            import tasks
             message = update['message']
             chat_id = message['chat']['id']
             if 'text' in message:
-                predicted_due = detect_datetime.apply_async(args=[message['text'], self.delay], queue='nlp').wait()
+                predicted_due = tasks.detect_datetime.apply_async(args=[message['text'], self.delay], queue='nlp').wait()
                 if predicted_due < datetime.utcnow():
                     due = datetime.utcnow() + relativedelta(microseconds=self.delay)
                 else:
@@ -45,7 +45,19 @@ class PersonalReminderBot:
                         content = message['photo'][0]['file_id']
                     else:
                         content = message[send_type]['file_id']
-                    remind.apply_async(args=[chat_id, send_type, content], eta=due, queue='reminders')
+                    tasks.remind.apply_async(args=[chat_id, send_type, content], eta=due, queue='reminders')
                     self.telegram_api.send_message(chat_id, 'Ok! You will be reminded at ' + (due + relativedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S"))
                     break
         return "Got the message"
+
+    def handle_retransmission(self, body):
+        send_type = body.get('send_type', '')
+        chat_id = body.get('chat_id', '')
+        content = body.get('content', '')
+        if send_type in self.message_types:
+            if send_type == 'text':
+                self.telegram_api.send_message(chat_id, self.reminder_text % 'message' + '\n' + content)
+            else:
+                self.telegram_api.send_message(chat_id, self.reminder_text % send_type)
+                getattr(self.telegram_api, 'send_' + send_type)(chat_id, content)
+        return "Message is retransmitted"

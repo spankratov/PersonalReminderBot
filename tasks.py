@@ -50,6 +50,7 @@ def process_word_for_date(word, now):
 
 @celery.task
 def detect_datetime(text, default_delay):
+    logging.info("Celery task 'detect_datetime' is invoked, text: {}, delay: {}".format(text, default_delay))
     user_now = datetime.utcnow()
     result = user_now
     changed = False
@@ -104,7 +105,7 @@ def detect_datetime(text, default_delay):
 
 @celery.task
 def remind(chat_id, send_type, content):
-    logging.info("Celery task is invoked, chat_id: {}, send_type: {}, content: {}".format(chat_id, send_type, content))
+    logging.info("Celery task 'remind' is invoked, chat_id: {}, send_type: {}, content: {}".format(chat_id, send_type, content))
     if send_type in app.bot.message_types:
         if send_type == 'text':
             app.bot.telegram_api.send_message(chat_id, app.bot.reminder_text % 'message' + '\n' + content)

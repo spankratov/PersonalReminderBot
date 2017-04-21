@@ -2,7 +2,7 @@ import flask
 import logging
 import logging.config
 from celery import Celery
-from views.reminders import UpdatePost
+from views.reminders import UpdatePost, RetransmitMessage
 from reminder_bot import PersonalReminderBot
 
 
@@ -14,7 +14,8 @@ class Route(object):
         self.resource = resource
 
 handlers = [
-    Route('/webhook/', 'webhook.update', UpdatePost)
+    Route('/webhook/', 'webhook.update', UpdatePost),
+    Route('/retransmit', 'retransmit', RetransmitMessage)
 ]
 
 
