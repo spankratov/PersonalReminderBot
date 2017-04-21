@@ -51,13 +51,12 @@ class PersonalReminderBot:
         return "Got the message"
 
     def handle_retransmission(self, body):
-        send_type = body.get('send_type', '')
-        chat_id = body.get('chat_id', '')
-        content = body.get('content', '')
-        if send_type in self.message_types:
-            if send_type == 'text':
-                self.telegram_api.send_message(chat_id, self.reminder_text % 'message' + '\n' + content)
+        if 'send_type' not in body or 'chat_id' not in body or 'content' not in body:
+            return "Wrong format"
+        if body['send_type'] in self.message_types:
+            if body['send_type'] == 'text':
+                self.telegram_api.send_message(body['chat_id'], self.reminder_text % 'message' + '\n' + body['content'])
             else:
-                self.telegram_api.send_message(chat_id, self.reminder_text % send_type)
-                getattr(self.telegram_api, 'send_' + send_type)(chat_id, content)
+                self.telegram_api.send_message(body['chat_id'], self.reminder_text % body['send_type'])
+                getattr(self.telegram_api, 'send_' + body['send_type'])(body['chat_id'], body['content'])
         return "Message is retransmitted"
