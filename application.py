@@ -15,7 +15,7 @@ class Route(object):
 
 handlers = [
     Route('/webhook/', 'webhook.update', UpdatePost),
-    Route('/retransmit', 'retransmit', RetransmitMessage)
+    Route('/retransmit/', 'retransmit', RetransmitMessage)
 ]
 
 
