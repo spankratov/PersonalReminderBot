@@ -31,6 +31,8 @@ class PersonalReminderBot:
             chat_id = message['chat']['id']
             if 'text' in message:
                 predicted_due = tasks.detect_datetime.apply_async(args=[message['text'], self.delay], queue='nlp').wait()
+                if not isinstance(predicted_due, datetime):
+                    predicted_due = datetime.strptime(predicted_due, "%Y-%m-%dT%H:%M:%S.%f")
                 if predicted_due < datetime.utcnow():
                     due = datetime.utcnow() + relativedelta(microseconds=self.delay)
                 else:
